@@ -142,6 +142,7 @@ class PatientCase(models.Model):
 
     class Meta:
         db_table = 'patient_case'
+        ordering = ['created_at']
 
     def __str__(self):
         return '{}:{}'.format(self.case_id, self.patient.__str__)
@@ -166,6 +167,7 @@ class PatientRecord(models.Model):
 
     class Meta:
         db_table = 'patient_record'
+        ordering = ['created_at']
 
     def __str__(self):
         return '{}.{}:{}'.format(

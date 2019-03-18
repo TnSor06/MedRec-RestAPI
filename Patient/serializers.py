@@ -9,11 +9,12 @@ class PatientRecordSerializer(serializers.ModelSerializer):
                   'on_arrival', 'diagnosis', 'tx',
                   'report_suggestions', 'medication',
                   'advice', 'query', 'case', 'created_at')
+        ordering = ('created_at')
 
 
 class PatientCaseSerializer(serializers.ModelSerializer):
-    patient_records = serializers.HyperlinkedRelatedField(
-        many=True, read_only=True, view_name='patient_:patientrecord-detail'
+    patient_records = serializers.PrimaryKeyRelatedField(
+        many=True, read_only=True
     )
 
     class Meta:
@@ -26,8 +27,8 @@ class PatientCaseSerializer(serializers.ModelSerializer):
 
 
 class PatientSerializer(serializers.ModelSerializer):
-    patient_cases = serializers.HyperlinkedRelatedField(
-        many=True, read_only=True, view_name='patient_:patientcase-detail'
+    patient_cases = serializers.PrimaryKeyRelatedField(
+        many=True, read_only=True
     )
 
     class Meta:

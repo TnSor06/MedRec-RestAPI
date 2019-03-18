@@ -1,44 +1,73 @@
-from rest_framework import viewsets
-from rest_framework.decorators import detail_route
-from rest_framework import response
+# Create your views here.
+from rest_framework import generics
+from django.shortcuts import get_object_or_404
 from . import models
 from . import serializers
 
 
-class PatientViewSet(viewsets.ModelViewSet):
-    queryset = models.Patient.objects.all()
+class ListCreatePatients(generics.ListCreateAPIView):
+    queryset = models.Patient.objects.get_queryset().order_by('patient_id')
     serializer_class = serializers.PatientSerializer
 
-    @detail_route(methods=['get'])
-    def patient_cases(self, request, pk=None):
-        self.pagination_class.page_size = 1
-        patient_cases = models.PatientCase.objects.filter(patient=pk)
-        page = self.paginate_queryset(patient_cases)
-        if page is not None:
-            serializer = serializers.PatientCaseSerializer(page, many=True)
-            return self.get_paginated_response(serializer.data)
-        serializer = serializers.PatientCaseSerializer(
-            patient_cases, many=True)
-        return response.Response(serializer.data)
+
+class RetrieveUpdateDestroyPatients(generics.RetrieveUpdateDestroyAPIView):
+    queryset = models.Patient.objects.get_queryset().order_by('patient_id')
+    serializer_class = serializers.PatientSerializer
+
+    def get_object(self):
+        return get_object_or_404(
+            self.get_queryset(),
+            patient_id=self.kwargs.get('pk')
+        )
 
 
-class PatientCaseViewSet(viewsets.ModelViewSet):
-    queryset = models.PatientCase.objects.all()
+class ListCreatePatientCases(generics.ListCreateAPIView):
+    queryset = models.PatientCase.objects.get_queryset().order_by('-created_at')
     serializer_class = serializers.PatientCaseSerializer
 
-    @detail_route(methods=['get'])
-    def patient_records(self, request, pk=None):
-        self.pagination_class.page_size = 4
-        patient_records = models.PatientRecord.objects.filter(case=pk)
-        page = self.paginate_queryset(patient_records)
-        if page is not None:
-            serializer = serializers.PatientRecordSerializer(page, many=True)
-            return self.get_paginated_response(serializer.data)
-        serializer = serializers.PatientRecordSerializer(
-            patient_records, many=True)
-        return response.Response(serializer.data)
+    def get_queryset(self):
+        return self.queryset.filter(patient=self.kwargs.get('patient_pk'))
+
+    def perform_create(self, serializer):
+        patient = get_object_or_404(
+            models.PatientCase,
+            self.kwargs.get('patient_pk'))
+        serializer.save(patient=patient)
 
 
-class PatientRecordViewSet(viewsets.ModelViewSet):
-    queryset = models.PatientRecord.objects.all()
+class RetrieveUpdateDestroyPatientCases(generics.RetrieveUpdateDestroyAPIView):
+    queryset = models.PatientCase.objects.get_queryset().order_by('-created_at')
+    serializer_class = serializers.PatientCaseSerializer
+
+    def get_object(self):
+        return get_object_or_404(
+            self.get_queryset(),
+            patient=self.kwargs.get('patient_pk'),
+            case_id=self.kwargs.get('pk')
+        )
+
+
+class ListCreatePatientRecords(generics.ListCreateAPIView):
+    queryset = models.PatientRecord.objects.get_queryset().order_by('-created_at')
     serializer_class = serializers.PatientRecordSerializer
+
+    def get_queryset(self):
+        return self.queryset.filter(case=self.kwargs.get('patient_case_pk'))
+
+    def perform_create(self, serializer):
+        patient_case = get_object_or_404(
+            models.PatientRecord,
+            self.kwargs.get('patient_case_pk'))
+        serializer.save(case=patient_case)
+
+
+class RetrieveUpdateDestroyPatientRecords(generics.RetrieveUpdateDestroyAPIView):
+    queryset = models.PatientRecord.objects.get_queryset().order_by('-created_at')
+    serializer_class = serializers.PatientRecordSerializer
+
+    def get_object(self):
+        return get_object_or_404(
+            self.get_queryset(),
+            case=self.kwargs.get('patient_case_pk'),
+            record_id=self.kwargs.get('pk')
+        )
