@@ -1,12 +1,12 @@
 from django.db import models
 from ICD.models import ICDCodes, ICDSubCodes
-
+from django.contrib.auth.models import User
 # Create your models here.
 
 
 class Country(models.Model):
     country_code = models.BigIntegerField(primary_key=True)
-    country_name = models.CharField(max_length=50, blank=True, null=True)
+    country_name = models.CharField(max_length=255, blank=True, null=True)
 
     class Meta:
         db_table = 'country'
@@ -18,7 +18,7 @@ class Country(models.Model):
 
 class Region(models.Model):
     pincode = models.BigIntegerField(primary_key=True)
-    region = models.CharField(max_length=75, blank=True, null=True)
+    region = models.CharField(max_length=255, blank=True, null=True)
 
     class Meta:
         db_table = 'region'
@@ -29,10 +29,10 @@ class Region(models.Model):
 
 class Hospital(models.Model):
     hospital_id = models.BigIntegerField(primary_key=True)
-    name = models.CharField(max_length=50, blank=True, null=True)
+    name = models.CharField(max_length=255, blank=True, null=True)
 
     address = models.TextField(blank=True, null=True)
-    city = models.CharField(max_length=20, blank=True, null=True)
+    city = models.CharField(max_length=255, blank=True, null=True)
     pincode = models.ForeignKey(
         Region, models.SET_NULL, db_column='pincode', blank=True, null=True)
     country_code = models.ForeignKey(
@@ -47,11 +47,11 @@ class Hospital(models.Model):
 
 
 class MedicalPractitioner(models.Model):
+    user = models.OneToOneField(User, related_name='medical_practitioner_profile', on_delete=models.CASCADE)
     mp_id = models.BigIntegerField(primary_key=True)
     last_name = models.CharField(max_length=20, blank=True, null=True)
     first_name = models.CharField(max_length=20, blank=True, null=True)
     middle_name = models.CharField(max_length=20, blank=True, null=True)
-    password = models.TextField(blank=True, null=True)
     dob = models.DateField(blank=True, null=True)
     sex = models.IntegerField(blank=True, null=True)
     address = models.TextField(blank=True, null=True)
@@ -59,7 +59,7 @@ class MedicalPractitioner(models.Model):
 
     degree = models.CharField(max_length=10, blank=True, null=True)
     field = models.TextField(blank=True, null=True)
-    email = models.CharField(max_length=30, blank=True, null=True)
+    email = models.CharField(max_length=255, blank=True, null=True)
     hospital = models.ForeignKey(
         Hospital, models.SET_NULL, blank=True, null=True)
     pincode = models.ForeignKey(
@@ -94,7 +94,7 @@ class Patient(models.Model):
     occupation = models.TextField(blank=True, null=True)
     contact_no_1 = models.BigIntegerField(blank=True, null=True)
     contact_no_2 = models.BigIntegerField(blank=True, null=True)
-    email = models.CharField(max_length=20, blank=True, null=True)
+    email = models.CharField(max_length=255, blank=True, null=True)
     allergies = models.TextField(blank=True, null=True)
     # Field name made lowercase.
     dhx = models.TextField(db_column='DHx', blank=True, null=True)

@@ -4,6 +4,29 @@ from django.shortcuts import get_object_or_404
 from . import models
 from . import serializers
 
+from django.contrib.auth.models import User
+
+
+class ListCreateUser(generics.ListCreateAPIView):
+    queryset = User.objects.all()
+    serializer_class = serializers.UserSerializer
+
+
+class ListCreateMedicalPractitioner(generics.ListCreateAPIView):
+    queryset = models.MedicalPractitioner.objects.get_queryset().order_by('mp_id')
+    serializer_class = serializers.MedicalPractitionerSerializer
+
+
+class RetrieveUpdateDestroyMedicalPractitioner(generics.RetrieveUpdateDestroyAPIView):
+    queryset = models.MedicalPractitioner.objects.get_queryset().order_by('mp_id')
+    serializer_class = serializers.MedicalPractitionerSerializer
+
+    def get_object(self):
+        return get_object_or_404(
+            self.get_queryset(),
+            mp_id=self.kwargs.get('pk')
+        )
+
 
 class ListCreatePatients(generics.ListCreateAPIView):
     queryset = models.Patient.objects.get_queryset().order_by('patient_id')
