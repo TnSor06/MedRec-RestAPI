@@ -47,7 +47,8 @@ class Hospital(models.Model):
 
 
 class MedicalPractitioner(models.Model):
-    user = models.OneToOneField(User, related_name='medical_practitioner_profile', on_delete=models.CASCADE)
+    user = models.OneToOneField(
+        User, related_name='medical_practitioner_profile', on_delete=models.CASCADE)
     mp_id = models.BigIntegerField(primary_key=True)
     last_name = models.CharField(max_length=20, blank=True, null=True)
     first_name = models.CharField(max_length=20, blank=True, null=True)

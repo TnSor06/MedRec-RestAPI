@@ -43,21 +43,6 @@ class PatientSerializer(serializers.ModelSerializer):
                   'iddm', 'niddm', 'mi', 'af', 'registered_at', 'patient_cases')
 
 
-class MedicalPractitionerSerializer(serializers.ModelSerializer):
-    user = serializers.PrimaryKeyRelatedField(
-        many=False, read_only=True
-    )
-
-    class Meta:
-        model = models.MedicalPractitioner
-        fields = ('mp_id', 'last_name', 'user',
-                  'first_name', 'middle_name',
-                  'dob', 'sex', 'address', 'clinic_address',
-                  'degree', 'field', 'email', 'hospital',
-                  'pincode', 'country_code', 'registered_at')
-        ordering = ('mp_id')
-
-
 class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
@@ -82,3 +67,16 @@ class UserSerializer(serializers.ModelSerializer):
         my_group = Group.objects.get(name=group)
         user_obj.groups.add(my_group)
         return validated_data
+
+
+class MedicalPractitionerSerializer(serializers.ModelSerializer):
+    user = UserSerializer()
+
+    class Meta:
+        model = models.MedicalPractitioner
+        fields = ('mp_id', 'last_name', 'user',
+                  'first_name', 'middle_name',
+                  'dob', 'sex', 'address', 'clinic_address',
+                  'degree', 'field', 'email', 'hospital',
+                  'pincode', 'country_code', 'registered_at')
+        ordering = ('mp_id')
