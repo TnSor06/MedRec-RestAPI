@@ -1,6 +1,8 @@
 from rest_framework import serializers
 from . import models
 from django.contrib.auth.models import User
+from django.contrib.auth.models import Group
+
 
 class PatientRecordSerializer(serializers.ModelSerializer):
     class Meta:
@@ -45,8 +47,7 @@ class MedicalPractitionerSerializer(serializers.ModelSerializer):
     user = serializers.PrimaryKeyRelatedField(
         many=False, read_only=True
     )
-    # user_ = User.objects.get_queryset(user=user)
-    # group_name = user_.groups.values_list('name', flat=True)
+
     class Meta:
         model = models.MedicalPractitioner
         fields = ('mp_id', 'last_name', 'user',
@@ -61,4 +62,23 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ('id', 'username', 'password', 'groups')
+        fields = ('id', 'username', 'password', 'email', 'groups')
+        extra_kwags = {
+            "password": {
+                "write_only": True
+            }}
+
+    def create(self, validated_data):
+        username = validated_data['username']
+        password = validated_data['password']
+        email = validated_data['email']
+        user_obj = User(
+            username=username,
+            email=email
+        )
+        user_obj.set_password(password)
+        user_obj.save()
+        group = validated_data['groups'][0].name
+        my_group = Group.objects.get(name=group)
+        user_obj.groups.add(my_group)
+        return validated_data
