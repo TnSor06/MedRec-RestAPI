@@ -70,7 +70,8 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class MedicalPractitionerSerializer(serializers.ModelSerializer):
-    user = UserSerializer()
+    serializers.PrimaryKeyRelatedField(read_only=True
+                                       )
 
     class Meta:
         model = models.MedicalPractitioner
