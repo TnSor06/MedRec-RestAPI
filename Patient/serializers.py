@@ -1,6 +1,5 @@
 from rest_framework import serializers
 from . import models
-from django.contrib.auth.models import User
 from django.contrib.auth.models import Group
 
 
@@ -46,38 +45,44 @@ class PatientSerializer(serializers.ModelSerializer):
 class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
-        model = User
-        fields = ('id', 'username', 'password', 'email', 'groups')
-        extra_kwags = {
+        model = models.CustomUser
+        fields = ('id', 'first_name', 'middle_name', 'last_name',
+                  'email', 'password', 'user_type', 'date_joined')
+        extra_kwargs = {
             "password": {
                 "write_only": True
             }}
+        read_only_fields = ('user_type', 'date_joined')
 
     def create(self, validated_data):
-        username = validated_data['username']
+        import datetime
         password = validated_data['password']
         email = validated_data['email']
-        user_obj = User(
-            username=username,
-            email=email
+        first_name = validated_data['first_name']
+        middle_name = validated_data['middle_name']
+        last_name = validated_data['last_name']
+        user_type = 2
+        user_obj = models.CustomUser(
+            email=email,
+            first_name=first_name,
+            middle_name=middle_name,
+            last_name=last_name,
+            user_type=user_type
         )
         user_obj.set_password(password)
         user_obj.save()
-        group = validated_data['groups'][0].name
-        my_group = Group.objects.get(name=group)
+        my_group = Group.objects.get(id=user_type)
         user_obj.groups.add(my_group)
         return validated_data
 
 
 class MedicalPractitionerSerializer(serializers.ModelSerializer):
-    serializers.PrimaryKeyRelatedField(read_only=True
-                                       )
+    user = serializers.PrimaryKeyRelatedField(read_only=True)
 
     class Meta:
         model = models.MedicalPractitioner
-        fields = ('mp_id', 'last_name', 'user',
-                  'first_name', 'middle_name',
+        fields = ('mp_id', 'user',
                   'dob', 'sex', 'address', 'clinic_address',
-                  'degree', 'field', 'email', 'hospital',
-                  'pincode', 'country_code', 'registered_at')
+                  'degree', 'field', 'hospital',
+                  'pincode', 'country_code')
         ordering = ('mp_id')

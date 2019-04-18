@@ -1,8 +1,42 @@
 from django.db import models
 from ICD.models import ICDCodes, ICDSubCodes
-from django.contrib.auth.models import User
 # Create your models here.
 
+# User
+
+# Import for User
+import uuid
+from django.contrib.auth.models import AbstractUser
+from django.utils.translation import ugettext_lazy as _
+
+from .managers import CustomUserManager
+
+
+class CustomUser(AbstractUser):
+    username = None
+    last_name = models.CharField(max_length=20, blank=True, null=True)
+    first_name = models.CharField(max_length=20, blank=True, null=True)
+    middle_name = models.CharField(max_length=20, blank=True, null=True)
+    TYPE_OF_USER = (
+        (1, 'Database-Admin'),
+        (2, 'Medical-Practitioner')
+    )
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    email = models.EmailField(_('email address'), unique=True)
+    user_type = models.IntegerField(
+        choices=TYPE_OF_USER,
+        default=None,
+    )
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = ['user_type']
+
+    objects = CustomUserManager()
+
+    def __str__(self):
+        return '{}-{}'.format(self.email, self.user_type)
+
+
+###
 
 class Country(models.Model):
     country_code = models.BigIntegerField(primary_key=True)
@@ -46,13 +80,26 @@ class Hospital(models.Model):
         return '{}'.format(self.name)
 
 
+class DatabaseAdmin(models.Model):
+    user = models.OneToOneField(
+        CustomUser, related_name='database_admin_profile', on_delete=models.CASCADE)
+    da_id = models.BigIntegerField(primary_key=True)
+
+    country_code = models.ForeignKey(
+        Country, models.SET_NULL, db_column='country_code',
+        blank=True, null=True)
+
+    class Meta:
+        db_table = 'database_admin'
+
+    def __str__(self):
+        return '{} {}'.format(self.user.first_name, self.user.last_name)
+
+
 class MedicalPractitioner(models.Model):
     user = models.OneToOneField(
-        User, related_name='medical_practitioner_profile', on_delete=models.CASCADE)
+        CustomUser, related_name='medical_practitioner_profile', on_delete=models.CASCADE)
     mp_id = models.BigIntegerField(primary_key=True)
-    last_name = models.CharField(max_length=20, blank=True, null=True)
-    first_name = models.CharField(max_length=20, blank=True, null=True)
-    middle_name = models.CharField(max_length=20, blank=True, null=True)
     dob = models.DateField(blank=True, null=True)
     sex = models.IntegerField(blank=True, null=True)
     address = models.TextField(blank=True, null=True)
@@ -60,7 +107,6 @@ class MedicalPractitioner(models.Model):
 
     degree = models.CharField(max_length=10, blank=True, null=True)
     field = models.TextField(blank=True, null=True)
-    email = models.CharField(max_length=255, blank=True, null=True)
     hospital = models.ForeignKey(
         Hospital, models.SET_NULL, blank=True, null=True)
     pincode = models.ForeignKey(
@@ -68,13 +114,12 @@ class MedicalPractitioner(models.Model):
     country_code = models.ForeignKey(
         Country, models.SET_NULL, db_column='country_code',
         blank=True, null=True)
-    registered_at = models.DateTimeField(blank=True, null=True)
 
     class Meta:
         db_table = 'medical_practitioner'
 
     def __str__(self):
-        return '{} {}'.format(self.first_name, self.last_name)
+        return '{} {}'.format(self.user.first_name, self.user.last_name)
 
 
 class Patient(models.Model):

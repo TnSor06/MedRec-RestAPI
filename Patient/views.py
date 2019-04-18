@@ -3,16 +3,17 @@ from rest_framework import generics
 from django.shortcuts import get_object_or_404
 from . import models
 from . import serializers
-
-from django.contrib.auth.models import User
+from rest_framework import permissions
 
 
 class ListCreateUser(generics.ListCreateAPIView):
-    queryset = User.objects.all()
+    permission_classes = (permissions.AllowAny,)
+    queryset = models.CustomUser.objects.all().filter(user_type=2)
     serializer_class = serializers.UserSerializer
 
 
 class ListCreateMedicalPractitioner(generics.ListCreateAPIView):
+    permission_classes = (permissions.AllowAny,)
     queryset = models.MedicalPractitioner.objects.get_queryset().order_by('mp_id')
     serializer_class = serializers.MedicalPractitionerSerializer
 
