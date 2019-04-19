@@ -55,7 +55,6 @@ class UserSerializer(serializers.ModelSerializer):
         read_only_fields = ('user_type', 'date_joined')
 
     def create(self, validated_data):
-        import datetime
         password = validated_data['password']
         email = validated_data['email']
         first_name = validated_data['first_name']
@@ -86,6 +85,3 @@ class MedicalPractitionerSerializer(serializers.ModelSerializer):
                   'degree', 'field', 'hospital',
                   'pincode', 'country_code')
         ordering = ('mp_id')
-
-
-# Check groups of User
