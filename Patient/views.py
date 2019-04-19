@@ -13,7 +13,6 @@ class ListCreateUser(generics.ListCreateAPIView):
 
 
 class ListCreateMedicalPractitioner(generics.ListCreateAPIView):
-    permission_classes = (permissions.AllowAny,)
     queryset = models.MedicalPractitioner.objects.get_queryset().order_by('mp_id')
     serializer_class = serializers.MedicalPractitionerSerializer
 

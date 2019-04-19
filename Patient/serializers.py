@@ -86,3 +86,6 @@ class MedicalPractitionerSerializer(serializers.ModelSerializer):
                   'degree', 'field', 'hospital',
                   'pincode', 'country_code')
         ordering = ('mp_id')
+
+
+# Check groups of User
