@@ -1,0 +1,175 @@
+CREATE TABLE `country` (
+  `country_code` bigint(20) NOT NULL,
+  `country_name` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE `hospital` (
+  `hospital_id` bigint(20) NOT NULL,
+  `name` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `address` longtext COLLATE utf8mb4_unicode_ci,
+  `city` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `country_code` bigint(20) DEFAULT NULL,
+  `pincode` bigint(20) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE `icd_codes` (
+  `icd_code` varchar(10) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `common_name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+
+CREATE TABLE `icd_sub_codes` (
+  `icd_sub_code` varchar(10) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `scientific_name` longtext COLLATE utf8mb4_unicode_ci,
+  `icd_code` varchar(10) COLLATE utf8mb4_unicode_ci DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+
+CREATE TABLE `medical_practitioner` (
+  `mp_id` bigint(20) NOT NULL,
+  `last_name` varchar(20) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `first_name` varchar(20) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `middle_name` varchar(20) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `dob` date DEFAULT NULL,
+  `sex` int(11) DEFAULT NULL,
+  `address` longtext COLLATE utf8mb4_unicode_ci,
+  `clinic_address` longtext COLLATE utf8mb4_unicode_ci,
+  `degree` varchar(10) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `field` longtext COLLATE utf8mb4_unicode_ci,
+  `email` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `registered_at` datetime(6) DEFAULT NULL,
+  `country_code` bigint(20) DEFAULT NULL,
+  `hospital_id` bigint(20) DEFAULT NULL,
+  `pincode` bigint(20) DEFAULT NULL,
+  `user_id` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE `patient` (
+  `patient_id` bigint(20) NOT NULL,
+  `last_name` varchar(20) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `first_name` varchar(20) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `middle_name` varchar(20) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `dob` date DEFAULT NULL,
+  `sex` int(11) DEFAULT NULL,
+  `blood_type` varchar(5) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `address` longtext COLLATE utf8mb4_unicode_ci,
+  `occupation` longtext COLLATE utf8mb4_unicode_ci,
+  `contact_no_1` bigint(20) DEFAULT NULL,
+  `contact_no_2` bigint(20) DEFAULT NULL,
+  `email` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `allergies` longtext COLLATE utf8mb4_unicode_ci,
+  `DHx` longtext COLLATE utf8mb4_unicode_ci,
+  `Ca` int(11) DEFAULT NULL,
+  `IDDM` int(11) DEFAULT NULL,
+  `NIDDM` int(11) DEFAULT NULL,
+  `MI` int(11) DEFAULT NULL,
+  `AF` int(11) DEFAULT NULL,
+  `registered_at` datetime(6) DEFAULT NULL,
+  `country_code` bigint(20) DEFAULT NULL,
+  `pincode` bigint(20) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE `patient_case` (
+  `case_id` bigint(20) NOT NULL,
+  `HPC` longtext COLLATE utf8mb4_unicode_ci,
+  `MoI` longtext COLLATE utf8mb4_unicode_ci,
+  `D_and_V` longtext COLLATE utf8mb4_unicode_ci,
+  `clinical_note` longtext COLLATE utf8mb4_unicode_ci,
+  `no_of_visits` bigint(20) DEFAULT NULL,
+  `created_at` datetime(6) DEFAULT NULL,
+  `icd_code` varchar(10) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `icd_sub_code` varchar(10) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `mp_id` bigint(20) DEFAULT NULL,
+  `patient_id` bigint(20) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE `patient_record` (
+  `record_id` bigint(20) NOT NULL,
+  `visit_no` bigint(20) DEFAULT NULL,
+  `on_arrival` longtext COLLATE utf8mb4_unicode_ci,
+  `diagnosis` longtext COLLATE utf8mb4_unicode_ci,
+  `Tx` longtext COLLATE utf8mb4_unicode_ci,
+  `report_suggestions` longtext COLLATE utf8mb4_unicode_ci,
+  `medication` longtext COLLATE utf8mb4_unicode_ci,
+  `advice` longtext COLLATE utf8mb4_unicode_ci,
+  `query` longtext COLLATE utf8mb4_unicode_ci,
+  `created_at` datetime(6) DEFAULT NULL,
+  `case_id` bigint(20) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+
+CREATE TABLE `region` (
+  `pincode` bigint(20) NOT NULL,
+  `region` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+ALTER TABLE `country`
+  ADD PRIMARY KEY (`country_code`);
+
+ALTER TABLE `hospital`
+  ADD PRIMARY KEY (`hospital_id`),
+  ADD KEY `hospital_country_code_de71582a_fk_country_country_code` (`country_code`),
+  ADD KEY `hospital_pincode_3edfcb69` (`pincode`);
+
+ALTER TABLE `icd_codes`
+  ADD PRIMARY KEY (`icd_code`);
+
+ALTER TABLE `icd_sub_codes`
+  ADD PRIMARY KEY (`icd_sub_code`),
+  ADD KEY `icd_sub_codes_icd_code_7110a821_fk_icd_codes_icd_code` (`icd_code`);
+
+ALTER TABLE `medical_practitioner`
+  ADD PRIMARY KEY (`mp_id`),
+  ADD UNIQUE KEY `user_id` (`user_id`),
+  ADD KEY `medical_practitioner_country_code_1792cd26_fk_country_c` (`country_code`),
+  ADD KEY `medical_practitioner_hospital_id_52255d43_fk_hospital_` (`hospital_id`),
+  ADD KEY `medical_practitioner_pincode_a3c2ab93` (`pincode`);
+
+ALTER TABLE `patient`
+  ADD PRIMARY KEY (`patient_id`),
+  ADD KEY `patient_country_code_6235f420_fk_country_country_code` (`country_code`),
+  ADD KEY `patient_pincode_93f7ee34` (`pincode`);
+
+ALTER TABLE `patient_case`
+  ADD PRIMARY KEY (`case_id`),
+  ADD KEY `patient_case_icd_code_b73a0999_fk_icd_codes_icd_code` (`icd_code`),
+  ADD KEY `patient_case_icd_sub_code_31801b4d_fk_icd_sub_codes_icd_sub_code` (`icd_sub_code`),
+  ADD KEY `patient_case_mp_id_db0bf58b_fk_medical_practitioner_mp_id` (`mp_id`),
+  ADD KEY `patient_case_patient_id_8e1d4273_fk_patient_patient_id` (`patient_id`);
+
+ALTER TABLE `patient_record`
+  ADD PRIMARY KEY (`record_id`),
+  ADD KEY `patient_record_case_id_a13e853c_fk_patient_case_case_id` (`case_id`);
+
+ALTER TABLE `region`
+  ADD PRIMARY KEY (`pincode`);
+
+
+ALTER TABLE `hospital`
+  ADD CONSTRAINT `hospital_country_code_de71582a_fk_country_country_code` FOREIGN KEY (`country_code`) REFERENCES `country` (`country_code`),
+  ADD CONSTRAINT `hospital_pincode_3edfcb69_fk_region_pincode` FOREIGN KEY (`pincode`) REFERENCES `region` (`pincode`);
+
+ALTER TABLE `icd_sub_codes`
+  ADD CONSTRAINT `icd_sub_codes_icd_code_7110a821_fk_icd_codes_icd_code` FOREIGN KEY (`icd_code`) REFERENCES `icd_codes` (`icd_code`);
+
+
+ALTER TABLE `medical_practitioner`
+  ADD CONSTRAINT `medical_practitioner_country_code_1792cd26_fk_country_c` FOREIGN KEY (`country_code`) REFERENCES `country` (`country_code`),
+  ADD CONSTRAINT `medical_practitioner_hospital_id_52255d43_fk_hospital_` FOREIGN KEY (`hospital_id`) REFERENCES `hospital` (`hospital_id`),
+  ADD CONSTRAINT `medical_practitioner_pincode_a3c2ab93_fk_region_pincode` FOREIGN KEY (`pincode`) REFERENCES `region` (`pincode`),
+  ADD CONSTRAINT `medical_practitioner_user_id_ed708ff1_fk_auth_user_id` FOREIGN KEY (`user_id`) REFERENCES `auth_user` (`id`);
+
+
+ALTER TABLE `patient`
+  ADD CONSTRAINT `patient_country_code_6235f420_fk_country_country_code` FOREIGN KEY (`country_code`) REFERENCES `country` (`country_code`),
+  ADD CONSTRAINT `patient_pincode_93f7ee34_fk_region_pincode` FOREIGN KEY (`pincode`) REFERENCES `region` (`pincode`);
+
+ALTER TABLE `patient_case`
+  ADD CONSTRAINT `patient_case_icd_code_b73a0999_fk_icd_codes_icd_code` FOREIGN KEY (`icd_code`) REFERENCES `icd_codes` (`icd_code`),
+  ADD CONSTRAINT `patient_case_icd_sub_code_31801b4d_fk_icd_sub_codes_icd_sub_code` FOREIGN KEY (`icd_sub_code`) REFERENCES `icd_sub_codes` (`icd_sub_code`),
+  ADD CONSTRAINT `patient_case_mp_id_db0bf58b_fk_medical_practitioner_mp_id` FOREIGN KEY (`mp_id`) REFERENCES `medical_practitioner` (`mp_id`),
+  ADD CONSTRAINT `patient_case_patient_id_8e1d4273_fk_patient_patient_id` FOREIGN KEY (`patient_id`) REFERENCES `patient` (`patient_id`);
+
+ALTER TABLE `patient_record`
+  ADD CONSTRAINT `patient_record_case_id_a13e853c_fk_patient_case_case_id` FOREIGN KEY (`case_id`) REFERENCES `patient_case` (`case_id`);
+COMMIT;

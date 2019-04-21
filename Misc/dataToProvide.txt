@@ -1,0 +1,59 @@
+
+For medcial Practitoner provide
+sex: 1
+dob:2019-04-09
+address: adasdasd
+mobile_number:9829310212
+clinic_address:asdasdd
+degree:asdasd
+field:asdasd
+hospital: 415001006
+pincode: 533
+country_code: 12
+user:3c2a6c13eeb643818722d45ff8d44557
+
+
+For patient
+last_name:Pramod
+first_name:Choudhary
+middle_name:Dinesh
+dob:2019-04-09
+sex:1
+blood_type:O+ve
+address:asdasddad
+pincode:533
+country_code:12
+occupation:dasdasd
+contact_no_1:4534534534
+contact_no_2:4353453434
+email:pra005@gd.co
+allergies:asdasd
+dhx:
+ca:
+iddm:
+niddm:
+mi:
+af:
+
+For Patient_Case:
+patient
+mp
+icd_sub_code
+icd_code
+hpc
+moi
+d_and_v
+clinical_note
+
+For Patient Record
+record_id
+visit_no
+on_arrival
+diagnosis
+tx
+report_suggestions
+medication
+advice
+query
+case
+created_at
