@@ -77,17 +77,24 @@ WSGI_APPLICATION = 'MedRecAPI.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/2.0/ref/settings/#databases
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'mysql.connector.django',
+#         'NAME': 'uOieMzLOTM',
+#         'USER': 'uOieMzLOTM',
+#         'PASSWORD': '7PypUFaCHJ',
+#         'HOST': 'remotemysql.com',   # Or an IP Address that your DB is hosted on
+#         'PORT': '3306',
+#         'OPTIONS': {
+#             'charset': 'utf8mb4',
+#         }
+#     }
+# }
+
 DATABASES = {
     'default': {
-        'ENGINE': 'mysql.connector.django',
-        'NAME': 'uOieMzLOTM',
-        'USER': 'uOieMzLOTM',
-        'PASSWORD': '7PypUFaCHJ',
-        'HOST': 'remotemysql.com',   # Or an IP Address that your DB is hosted on
-        'PORT': '3306',
-        'OPTIONS': {
-            'charset': 'utf8mb4',
-        }
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     }
 }
 

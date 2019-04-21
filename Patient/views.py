@@ -12,6 +12,18 @@ class ListCreateUser(generics.ListCreateAPIView):
     serializer_class = serializers.UserSerializer
 
 
+class RetrieveUpdateDestroyUser(generics.RetrieveUpdateDestroyAPIView):
+    permission_classes = (permissions.AllowAny,)
+    queryset = models.CustomUser.objects.get_queryset().order_by('id')
+    serializer_class = serializers.UserSerializer
+
+    def get_object(self):
+        return get_object_or_404(
+            self.get_queryset(),
+            id=self.kwargs.get('pk')
+        )
+
+
 class ListCreateMedicalPractitioner(generics.ListCreateAPIView):
     queryset = models.MedicalPractitioner.objects.get_queryset().order_by('mp_id')
     serializer_class = serializers.MedicalPractitionerSerializer

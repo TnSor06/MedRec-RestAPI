@@ -5,6 +5,7 @@ from ICD.models import ICDCodes, ICDSubCodes
 # User
 
 # Import for User
+from django.contrib.auth.models import Permission
 import uuid
 from django.contrib.auth.models import AbstractUser
 from django.utils.translation import ugettext_lazy as _
@@ -22,7 +23,7 @@ class CustomUser(AbstractUser):
         (2, 'Medical-Practitioner')
     )
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    email = models.EmailField(_('email address'), unique=True)
+    email = models.EmailField(_('email'), unique=True)
     user_type = models.IntegerField(
         choices=TYPE_OF_USER,
         default=None,
@@ -103,6 +104,7 @@ class MedicalPractitioner(models.Model):
     dob = models.DateField(blank=True, null=True)
     sex = models.IntegerField(blank=True, null=True)
     address = models.TextField(blank=True, null=True)
+    mobile_number = models.CharField(max_length=10, blank=True, null=True)
     clinic_address = models.TextField(blank=True, null=True)
 
     degree = models.CharField(max_length=10, blank=True, null=True)
@@ -117,6 +119,17 @@ class MedicalPractitioner(models.Model):
 
     class Meta:
         db_table = 'medical_practitioner'
+        permissions = (
+            ('add_patient', 'Can add patient'),
+            ('delete_patient', 'Can delete patient'),
+            ('change_patient', 'Can change patient'),
+            ('add_patientcase', 'Can add patient case'),
+            ('delete_patientcase', 'Can delete patient case'),
+            ('change_patientcase', 'Can change patient case'),
+            ('add_patientrecord', 'Can add patient record'),
+            ('delete_patientrecord', 'Can delete patient record'),
+            ('change_patientrecord', 'Can change patient record'),
+        )
 
     def __str__(self):
         return '{} {}'.format(self.user.first_name, self.user.last_name)

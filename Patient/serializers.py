@@ -52,7 +52,7 @@ class UserSerializer(serializers.ModelSerializer):
             "password": {
                 "write_only": True
             }}
-        read_only_fields = ('user_type', 'date_joined')
+        read_only_fields = ('user_type', 'date_joined', 'id')
 
     def create(self, validated_data):
         password = validated_data['password']
@@ -72,7 +72,7 @@ class UserSerializer(serializers.ModelSerializer):
         user_obj.save()
         my_group = Group.objects.get(id=user_type)
         user_obj.groups.add(my_group)
-        return validated_data
+        return user_obj
 
 
 class MedicalPractitionerSerializer(serializers.ModelSerializer):
@@ -81,7 +81,7 @@ class MedicalPractitionerSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.MedicalPractitioner
         fields = ('mp_id', 'user',
-                  'dob', 'sex', 'address', 'clinic_address',
+                  'dob', 'sex', 'address', 'mobile_number', 'clinic_address',
                   'degree', 'field', 'hospital',
                   'pincode', 'country_code')
         ordering = ('mp_id')
