@@ -20,7 +20,7 @@ class RetrieveUpdateDestroyUser(generics.RetrieveUpdateDestroyAPIView):
     def get_object(self):
         return get_object_or_404(
             self.get_queryset(),
-            id=self.kwargs.get('pk')
+            email=self.kwargs.get('email')
         )
 
 

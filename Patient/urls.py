@@ -27,6 +27,6 @@ urlpatterns = [
         name='medical_practitioner_detail'),
     url(r'^user/$',
         views.ListCreateUser.as_view(), name='users'),
-    url(r'^user/(?P<pk>[a-zA-Z0-9-]+)/$',
+    url(r'^user/(?P<email>([\w\.\-]+)@([\w\-]+)((\.(\w){2,3})+))/$',
         views.RetrieveUpdateDestroyUser.as_view(), name='users_detail'),
 ]
