@@ -1,0 +1,37 @@
+CREATE TRIGGER `medical_practitioner_insert_trigger`
+AFTER INSERT ON `medical_practitioner`
+FOR EACH ROW
+BEGIN
+    SET 
+        @event_type = 'insert',
+        @unique_id = NEW.mp_id,
+        @Table_Name_Triggered = 'medical_practitioner';
+    INSERT INTO `History` (Table_name,Event_Type,ID,TimeStamp) VALUES (@Table_Name_Triggered,@event_type,@unique_id,CURRENT_TIMESTAMP);
+END;//
+
+------------------------ SAMPLE DATA ----------------------------
+CREATE TRIGGER `medical_practitioner_changes` ON `medical_practitioner` 
+FOR INSERT OR UPDATE OR DELETE
+AS DECLARE
+	DECLARE @event_type varchar(42)
+    DECLARE @Table_Name_Triggered varchar(42)
+    DECLARE @unique_id bigint(10);
+IF EXISTS(SELECT * FROM inserted)
+	IF EXISTS(SELECT * FROM deleted)
+        SELECT @event_type = 'update'
+        SELECT @unique_id = ins.mp_id FROM INSERTED ins;
+    ELSE
+        SELECT @event_type = 'insert'
+        SELECT @unique_id = ins.mp_id FROM INSERTED ins;
+ELSE
+	IF EXISTS(SELECT * FROM deleted)
+        SELECT @event_type = 'delete'
+        SELECT @unique_id = ins.mp_id FROM DELETED ins;
+    ELSE
+        --no rows affected - cannot determine event
+        SELECT @event_type = 'unknown'
+SELECT @Table_Name_Triggered = 'medical_practitioner'
+
+BEGIN 
+   	INSERT INTO `History` (Table_name,Event_Type,ID,TimeStamp) VALUES (@Table_Name_Triggered,@event_type,@unique_id,CURRENT_TIMESTAMP)
+END; 

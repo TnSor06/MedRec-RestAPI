@@ -61,7 +61,15 @@ class ListCreatePatientCases(generics.ListCreateAPIView):
     serializer_class = serializers.PatientCaseSerializer
 
     def get_queryset(self):
-        return self.queryset.filter(patient=self.kwargs.get('patient_pk'))
+        from_date = self.request.query_params.get('from_date', None)
+        to_date = self.request.query_params.get('to_date', None)
+        last_many = self.request.query_params.get('last_many', None)
+        qs = self.queryset.filter(patient=self.kwargs.get('patient_pk'))
+        if from_date is not None and to_date is not None:
+            qs = qs.filter(created_at__range=(from_date, to_date))
+        elif last_many is not None:
+            qs = qs[0:last_many]
+        return qs
 
     def perform_create(self, serializer):
         patient = get_object_or_404(
@@ -87,7 +95,16 @@ class ListCreatePatientRecords(generics.ListCreateAPIView):
     serializer_class = serializers.PatientRecordSerializer
 
     def get_queryset(self):
-        return self.queryset.filter(case=self.kwargs.get('patient_case_pk'))
+        from_date = self.request.query_params.get('from_date', None)
+        to_date = self.request.query_params.get('to_date', None)
+        last_many = self.request.query_params.get('last_many', None)
+
+        qs = self.queryset.filter(case=self.kwargs.get('patient_case_pk'))
+        if from_date is not None and to_date is not None:
+            qs = qs.filter(created_at__range=(from_date, to_date))
+        elif last_many is not None:
+            qs = qs[0:last_many]
+        return qs
 
     def perform_create(self, serializer):
         patient_case = get_object_or_404(
