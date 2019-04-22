@@ -153,7 +153,8 @@ class Patient(models.Model):
     occupation = models.TextField(blank=True, null=True)
     contact_no_1 = models.BigIntegerField(blank=True, null=True)
     contact_no_2 = models.BigIntegerField(blank=True, null=True)
-    email = models.CharField(max_length=255, blank=True, null=True)
+    email = models.CharField(
+        max_length=255, unique=True, blank=True, null=True)
     allergies = models.TextField(blank=True, null=True)
     # Field name made lowercase.
     dhx = models.TextField(db_column='DHx', blank=True, null=True)
